@@ -115,6 +115,7 @@ func NewServer(opts ...ServerOption) *Server {
 	//注册health
 	grpc_health_v1.RegisterHealthServer(srv.Server, srv.health)
 	apimd.RegisterMetadataServer(srv.Server, srv.metadata)
+
 	reflection.Register(srv.Server)
 	//可以支持用户直接通过grpc的一个接口查看当前支持的所有的rpc服务
 
@@ -187,7 +188,7 @@ func (s *Server) listenAndEndpoint() error {
 func (s *Server) Start(ctx context.Context) error {
 	log.Infof("[grpc] server listening on: %s", s.lis.Addr().String())
 	s.health.Resume()
-	
+
 	// 在单独的goroutine中启动服务器，以便可以监听上下文取消
 	go func() {
 		<-ctx.Done()
@@ -203,4 +204,8 @@ func (s *Server) Stop(ctx context.Context) error {
 	s.GracefulStop()
 	log.Infof("[grpc] server stopped")
 	return nil
+}
+
+func (s *Server) GetGrpcServer() *grpc.Server {
+	return s.Server
 }

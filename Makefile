@@ -6,6 +6,10 @@ include scripts/make-rules/all.mk
 build: go.tidy ## 编译源码，依赖 tidy 目标自动添加/移除依赖包 例如: make build MAIN_PATH=cmd/other_server/main.go BINARY_NAME=other_server
 	$(MAKE) go.build
 
+.PHONY: protoc
+protoc: ## 生成 protobuf 文件
+	$(MAKE) gen.protoc
+
 
 ## --------------------------------------
 ## Cleanup
