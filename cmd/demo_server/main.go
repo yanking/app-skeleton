@@ -4,8 +4,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/yanking/app-skeleton/internal/config"
+	"github.com/yanking/app-skeleton/pkg/app"
+	"github.com/yanking/app-skeleton/pkg/grpc"
 )
 
 func main() {
@@ -14,23 +17,26 @@ func main() {
 		log.Fatalf("failed to initialize config: %v", err)
 	}
 
-	// 获取配置实例
 	cfg := config.Get()
 
-	// 打印部分配置项验证
-	fmt.Printf("App Name: %s\n", cfg.AppName)
-	fmt.Printf("Server Mode: %s\n", cfg.ServerMode)
-	fmt.Printf("JWT Key: %s\n", cfg.JwtKey)
-	fmt.Printf("Expiration: %s\n", cfg.Expiration)
-	fmt.Printf("HTTP Addr: %s\n", cfg.HTTP.Addr)
-	fmt.Printf("HTTP Timeout: %s\n", cfg.HTTP.Timeout)
-	fmt.Printf("GRPC Addr: %s\n", cfg.Grpc.Addr)
-	fmt.Printf("Log Level: %s\n", cfg.Log.Level)
-	fmt.Printf("Log Format: %s\n", cfg.Log.Format)
-	fmt.Printf("MySQL Addr: %s\n", cfg.Mysql.Addr)
-	fmt.Printf("MySQL Username: %s\n", cfg.Mysql.Username)
-	fmt.Printf("MySQL Database: %s\n", cfg.Mysql.Database)
-	fmt.Printf("Redis Addr: %s\n", cfg.Redis.Addr)
-	fmt.Printf("Jaeger Host: %s\n", cfg.Jaeger.AgentHost)
-	fmt.Printf("Jaeger Port: %d\n", cfg.Jaeger.AgentPort)
+	fmt.Println(cfg)
+	
+	var components []app.IComponent
+
+	rpcServer := grpc.NewServer(
+		grpc.WithAddress(cfg.Grpc.Addr),
+		grpc.WithMetrics(true),
+		grpc.WithTimeout(time.Second*5),
+	)
+	components = append(components, rpcServer)
+
+	a, err := app.New(cfg.AppName, components)
+	if err != nil {
+		panic(err)
+	}
+
+	err = a.Run()
+	if err != nil {
+		panic(err)
+	}
 }

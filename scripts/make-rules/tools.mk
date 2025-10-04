@@ -45,6 +45,10 @@ install.swagger: ## Install swagger
 install.buf: ## Install buf
 	@$(GO) install github.com/bufbuild/buf/cmd/buf@latest
 
+.PHONY: install.grpcurl
+install.grpcurl: ## Install grpcurl
+	@$(GO) install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
+
 .PHONY: install.redocly
 install.redocly: ## Install Redocly CLI
 	@$(GO) install github.com/redocly/redoc/cmd/redoc@latest
