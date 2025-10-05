@@ -7,8 +7,6 @@
 package v1
 
 import (
-	_ "github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2/options"
-	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -23,60 +21,70 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type HealthzRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Dummy         string                 `protobuf:"bytes,1,opt,name=dummy,proto3" json:"dummy,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
+// ServiceStatus 表示服务的健康状态
+type ServiceStatus int32
 
-func (x *HealthzRequest) Reset() {
-	*x = HealthzRequest{}
-	mi := &file_demo_v1_healthz_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
+const (
+	// Healthy 表示服务健康
+	ServiceStatus_HEALTHY ServiceStatus = 0
+	// Unhealthy 表示服务不健康
+	ServiceStatus_UNHEALTHY ServiceStatus = 1
+)
 
-func (x *HealthzRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*HealthzRequest) ProtoMessage() {}
-
-func (x *HealthzRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_demo_v1_healthz_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
+// Enum value maps for ServiceStatus.
+var (
+	ServiceStatus_name = map[int32]string{
+		0: "HEALTHY",
+		1: "UNHEALTHY",
 	}
-	return mi.MessageOf(x)
+	ServiceStatus_value = map[string]int32{
+		"HEALTHY":   0,
+		"UNHEALTHY": 1,
+	}
+)
+
+func (x ServiceStatus) Enum() *ServiceStatus {
+	p := new(ServiceStatus)
+	*p = x
+	return p
 }
 
-// Deprecated: Use HealthzRequest.ProtoReflect.Descriptor instead.
-func (*HealthzRequest) Descriptor() ([]byte, []int) {
+func (x ServiceStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ServiceStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_demo_v1_healthz_proto_enumTypes[0].Descriptor()
+}
+
+func (ServiceStatus) Type() protoreflect.EnumType {
+	return &file_demo_v1_healthz_proto_enumTypes[0]
+}
+
+func (x ServiceStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ServiceStatus.Descriptor instead.
+func (ServiceStatus) EnumDescriptor() ([]byte, []int) {
 	return file_demo_v1_healthz_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *HealthzRequest) GetDummy() string {
-	if x != nil {
-		return x.Dummy
-	}
-	return ""
-}
-
 type HealthzResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Dummy         string                 `protobuf:"bytes,1,opt,name=dummy,proto3" json:"dummy,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// status 表示服务的健康状态
+	Status ServiceStatus `protobuf:"varint,1,opt,name=status,proto3,enum=demo.v1.ServiceStatus" json:"status,omitempty"`
+	// timestamp 表示请求的时间戳
+	Timestamp string `protobuf:"bytes,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	// message 表示可选的状态消息，描述服务健康的更多信息
+	Message       string `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *HealthzResponse) Reset() {
 	*x = HealthzResponse{}
-	mi := &file_demo_v1_healthz_proto_msgTypes[1]
+	mi := &file_demo_v1_healthz_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -88,7 +96,7 @@ func (x *HealthzResponse) String() string {
 func (*HealthzResponse) ProtoMessage() {}
 
 func (x *HealthzResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_demo_v1_healthz_proto_msgTypes[1]
+	mi := &file_demo_v1_healthz_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -101,12 +109,114 @@ func (x *HealthzResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthzResponse.ProtoReflect.Descriptor instead.
 func (*HealthzResponse) Descriptor() ([]byte, []int) {
+	return file_demo_v1_healthz_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *HealthzResponse) GetStatus() ServiceStatus {
+	if x != nil {
+		return x.Status
+	}
+	return ServiceStatus_HEALTHY
+}
+
+func (x *HealthzResponse) GetTimestamp() string {
+	if x != nil {
+		return x.Timestamp
+	}
+	return ""
+}
+
+func (x *HealthzResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type EchoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EchoRequest) Reset() {
+	*x = EchoRequest{}
+	mi := &file_demo_v1_healthz_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EchoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EchoRequest) ProtoMessage() {}
+
+func (x *EchoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_demo_v1_healthz_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EchoRequest.ProtoReflect.Descriptor instead.
+func (*EchoRequest) Descriptor() ([]byte, []int) {
 	return file_demo_v1_healthz_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *HealthzResponse) GetDummy() string {
+func (x *EchoRequest) GetValue() string {
 	if x != nil {
-		return x.Dummy
+		return x.Value
+	}
+	return ""
+}
+
+type EchoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EchoResponse) Reset() {
+	*x = EchoResponse{}
+	mi := &file_demo_v1_healthz_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EchoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EchoResponse) ProtoMessage() {}
+
+func (x *EchoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_demo_v1_healthz_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EchoResponse.ProtoReflect.Descriptor instead.
+func (*EchoResponse) Descriptor() ([]byte, []int) {
+	return file_demo_v1_healthz_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *EchoResponse) GetValue() string {
+	if x != nil {
+		return x.Value
 	}
 	return ""
 }
@@ -115,14 +225,18 @@ var File_demo_v1_healthz_proto protoreflect.FileDescriptor
 
 const file_demo_v1_healthz_proto_rawDesc = "" +
 	"\n" +
-	"\x15demo/v1/healthz.proto\x12\ademo.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"&\n" +
-	"\x0eHealthzRequest\x12\x14\n" +
-	"\x05dummy\x18\x01 \x01(\tR\x05dummy\"'\n" +
-	"\x0fHealthzResponse\x12\x14\n" +
-	"\x05dummy\x18\x01 \x01(\tR\x05dummy2\x97\x01\n" +
-	"\x0eHealthzService\x12\x84\x01\n" +
-	"\aHealthz\x12\x17.demo.v1.HealthzRequest\x1a\x18.demo.v1.HealthzResponse\"F\x92A+\n" +
-	"\f服务治理\x12\x12服务健康检查*\aHealthz\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/demo/healthzB4Z2github.com/yanking/app-skeleton/api/gen/demo/v1;v1b\x06proto3"
+	"\x15demo/v1/healthz.proto\x12\ademo.v1\"y\n" +
+	"\x0fHealthzResponse\x12.\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x16.demo.v1.ServiceStatusR\x06status\x12\x1c\n" +
+	"\ttimestamp\x18\x02 \x01(\tR\ttimestamp\x12\x18\n" +
+	"\amessage\x18\x03 \x01(\tR\amessage\"#\n" +
+	"\vEchoRequest\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value\"$\n" +
+	"\fEchoResponse\x12\x14\n" +
+	"\x05value\x18\x01 \x01(\tR\x05value*+\n" +
+	"\rServiceStatus\x12\v\n" +
+	"\aHEALTHY\x10\x00\x12\r\n" +
+	"\tUNHEALTHY\x10\x01B4Z2github.com/yanking/app-skeleton/api/gen/demo/v1;v1b\x06proto3"
 
 var (
 	file_demo_v1_healthz_proto_rawDescOnce sync.Once
@@ -136,19 +250,21 @@ func file_demo_v1_healthz_proto_rawDescGZIP() []byte {
 	return file_demo_v1_healthz_proto_rawDescData
 }
 
-var file_demo_v1_healthz_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_demo_v1_healthz_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_demo_v1_healthz_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_demo_v1_healthz_proto_goTypes = []any{
-	(*HealthzRequest)(nil),  // 0: demo.v1.HealthzRequest
+	(ServiceStatus)(0),      // 0: demo.v1.ServiceStatus
 	(*HealthzResponse)(nil), // 1: demo.v1.HealthzResponse
+	(*EchoRequest)(nil),     // 2: demo.v1.EchoRequest
+	(*EchoResponse)(nil),    // 3: demo.v1.EchoResponse
 }
 var file_demo_v1_healthz_proto_depIdxs = []int32{
-	0, // 0: demo.v1.HealthzService.Healthz:input_type -> demo.v1.HealthzRequest
-	1, // 1: demo.v1.HealthzService.Healthz:output_type -> demo.v1.HealthzResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: demo.v1.HealthzResponse.status:type_name -> demo.v1.ServiceStatus
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_demo_v1_healthz_proto_init() }
@@ -161,13 +277,14 @@ func file_demo_v1_healthz_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_demo_v1_healthz_proto_rawDesc), len(file_demo_v1_healthz_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   2,
+			NumEnums:      1,
+			NumMessages:   3,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   0,
 		},
 		GoTypes:           file_demo_v1_healthz_proto_goTypes,
 		DependencyIndexes: file_demo_v1_healthz_proto_depIdxs,
+		EnumInfos:         file_demo_v1_healthz_proto_enumTypes,
 		MessageInfos:      file_demo_v1_healthz_proto_msgTypes,
 	}.Build()
 	File_demo_v1_healthz_proto = out.File

@@ -11,7 +11,7 @@
   },
   "tags": [
     {
-      "name": "EchoService"
+      "name": "DemoService"
     }
   ],
   "schemes": [
@@ -26,7 +26,7 @@
   "paths": {
     "/v1/demo/echo": {
       "post": {
-        "operationId": "EchoService_Echo",
+        "operationId": "DemoService_Echo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -52,7 +52,30 @@
           }
         ],
         "tags": [
-          "EchoService"
+          "DemoService"
+        ]
+      }
+    },
+    "/v1/demo/healthz": {
+      "get": {
+        "summary": "服务健康检查",
+        "operationId": "Healthz",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1HealthzResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "服务治理"
         ]
       }
     }
@@ -101,6 +124,33 @@
           "type": "string"
         }
       }
+    },
+    "v1HealthzResponse": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "$ref": "#/definitions/v1ServiceStatus",
+          "title": "status 表示服务的健康状态"
+        },
+        "timestamp": {
+          "type": "string",
+          "title": "timestamp 表示请求的时间戳"
+        },
+        "message": {
+          "type": "string",
+          "title": "message 表示可选的状态消息，描述服务健康的更多信息"
+        }
+      }
+    },
+    "v1ServiceStatus": {
+      "type": "string",
+      "enum": [
+        "HEALTHY",
+        "UNHEALTHY"
+      ],
+      "default": "HEALTHY",
+      "description": "- HEALTHY: Healthy 表示服务健康\n - UNHEALTHY: Unhealthy 表示服务不健康",
+      "title": "ServiceStatus 表示服务的健康状态"
     }
   }
 }

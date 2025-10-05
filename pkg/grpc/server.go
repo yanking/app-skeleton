@@ -2,7 +2,9 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"net"
+	"net/http"
 	"net/url"
 	"time"
 
@@ -10,6 +12,7 @@ import (
 	"github.com/yanking/app-skeleton/pkg/log"
 
 	apimd "github.com/go-kratos/kratos/v2/api/metadata"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -35,9 +38,18 @@ type Server struct {
 
 	enableMetrics bool
 	enableTracing bool
+
+	// gRPC-Gateway 相关字段
+	enableGateway bool
+	gatewayAddr   string
+	gatewayServer *http.Server
+	gatewayMux    *runtime.ServeMux
 }
 
 func (s *Server) Name() string {
+	if s.enableGateway {
+		return "grpc+gatewayServer"
+	}
 	return "grpcServer"
 }
 
@@ -119,6 +131,15 @@ func NewServer(opts ...ServerOption) *Server {
 	reflection.Register(srv.Server)
 	//可以支持用户直接通过grpc的一个接口查看当前支持的所有的rpc服务
 
+	// 初始化 gRPC-Gateway
+	if srv.enableGateway {
+		srv.gatewayMux = runtime.NewServeMux()
+		srv.gatewayServer = &http.Server{
+			Addr:    srv.gatewayAddr,
+			Handler: srv.gatewayMux,
+		}
+	}
+
 	return srv
 }
 
@@ -170,6 +191,19 @@ func WithOptions(opts ...grpc.ServerOption) ServerOption {
 	}
 }
 
+// WithGateway 启用 gRPC-Gateway
+func WithGateway(enable bool, addr string) ServerOption {
+	return func(s *Server) {
+		s.enableGateway = enable
+		s.gatewayAddr = addr
+	}
+}
+
+// GetGatewayMux 返回 gRPC-Gateway 的多路复用器，用于注册 HTTP 处理程序
+func (s *Server) GetGatewayMux() *runtime.ServeMux {
+	return s.gatewayMux
+}
+
 // 完成ip和端口的提取
 func (s *Server) listenAndEndpoint() error {
 	if s.lis == nil {
@@ -186,6 +220,7 @@ func (s *Server) listenAndEndpoint() error {
 
 // Start 启动grpc的服务
 func (s *Server) Start(ctx context.Context) error {
+	// 启动 gRPC 服务器
 	log.Infof("[grpc] server listening on: %s", s.lis.Addr().String())
 	s.health.Resume()
 
@@ -193,7 +228,20 @@ func (s *Server) Start(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		s.GracefulStop()
+		if s.gatewayServer != nil {
+			_ = s.gatewayServer.Shutdown(context.Background())
+		}
 	}()
+
+	// 如果启用了 gRPC-Gateway，则同时启动 HTTP 服务器
+	if s.enableGateway {
+		go func() {
+			log.Infof("[gateway] server listening on: %s", s.gatewayAddr)
+			if err := s.gatewayServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				log.Errorf("[gateway] server error: %v", err)
+			}
+		}()
+	}
 
 	return s.Serve(s.lis)
 }
@@ -201,11 +249,13 @@ func (s *Server) Start(ctx context.Context) error {
 func (s *Server) Stop(ctx context.Context) error {
 	//设置服务的状态为not_serving，防止接收新的请求过来
 	s.health.Shutdown()
+
+	if s.gatewayServer != nil {
+		_ = s.gatewayServer.Shutdown(ctx)
+		log.Infof("[gateway] server stopped")
+	}
+
 	s.GracefulStop()
 	log.Infof("[grpc] server stopped")
 	return nil
-}
-
-func (s *Server) GetGrpcServer() *grpc.Server {
-	return s.Server
 }

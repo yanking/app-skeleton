@@ -22,6 +22,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // Suppress "imported and not used" errors
@@ -35,7 +36,7 @@ var (
 	_ = metadata.Join
 )
 
-func request_EchoService_Echo_0(ctx context.Context, marshaler runtime.Marshaler, client EchoServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_DemoService_Echo_0(ctx context.Context, marshaler runtime.Marshaler, client DemoServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq EchoRequest
 		metadata runtime.ServerMetadata
@@ -50,7 +51,7 @@ func request_EchoService_Echo_0(ctx context.Context, marshaler runtime.Marshaler
 	return msg, metadata, err
 }
 
-func local_request_EchoService_Echo_0(ctx context.Context, marshaler runtime.Marshaler, server EchoServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_DemoService_Echo_0(ctx context.Context, marshaler runtime.Marshaler, server DemoServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq EchoRequest
 		metadata runtime.ServerMetadata
@@ -62,39 +63,80 @@ func local_request_EchoService_Echo_0(ctx context.Context, marshaler runtime.Mar
 	return msg, metadata, err
 }
 
-// RegisterEchoServiceHandlerServer registers the http handlers for service EchoService to "mux".
-// UnaryRPC     :call EchoServiceServer directly.
+func request_DemoService_Healthz_0(ctx context.Context, marshaler runtime.Marshaler, client DemoServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq emptypb.Empty
+		metadata runtime.ServerMetadata
+	)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.Healthz(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_DemoService_Healthz_0(ctx context.Context, marshaler runtime.Marshaler, server DemoServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq emptypb.Empty
+		metadata runtime.ServerMetadata
+	)
+	msg, err := server.Healthz(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+// RegisterDemoServiceHandlerServer registers the http handlers for service DemoService to "mux".
+// UnaryRPC     :call DemoServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterEchoServiceHandlerFromEndpoint instead.
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterDemoServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterEchoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server EchoServiceServer) error {
-	mux.Handle(http.MethodPost, pattern_EchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+func RegisterDemoServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server DemoServiceServer) error {
+	mux.Handle(http.MethodPost, pattern_DemoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/demo.v1.EchoService/Echo", runtime.WithHTTPPathPattern("/v1/demo/echo"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/demo.v1.DemoService/Echo", runtime.WithHTTPPathPattern("/v1/demo/echo"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_EchoService_Echo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_DemoService_Echo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_EchoService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_DemoService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_DemoService_Healthz_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/demo.v1.DemoService/Healthz", runtime.WithHTTPPathPattern("/v1/demo/healthz"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_DemoService_Healthz_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_DemoService_Healthz_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
 }
 
-// RegisterEchoServiceHandlerFromEndpoint is same as RegisterEchoServiceHandler but
+// RegisterDemoServiceHandlerFromEndpoint is same as RegisterDemoServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterDemoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.NewClient(endpoint, opts...)
 	if err != nil {
 		return err
@@ -113,45 +155,64 @@ func RegisterEchoServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.Se
 			}
 		}()
 	}()
-	return RegisterEchoServiceHandler(ctx, mux, conn)
+	return RegisterDemoServiceHandler(ctx, mux, conn)
 }
 
-// RegisterEchoServiceHandler registers the http handlers for service EchoService to "mux".
+// RegisterDemoServiceHandler registers the http handlers for service DemoService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterEchoServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterEchoServiceHandlerClient(ctx, mux, NewEchoServiceClient(conn))
+func RegisterDemoServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterDemoServiceHandlerClient(ctx, mux, NewDemoServiceClient(conn))
 }
 
-// RegisterEchoServiceHandlerClient registers the http handlers for service EchoService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "EchoServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "EchoServiceClient"
+// RegisterDemoServiceHandlerClient registers the http handlers for service DemoService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "DemoServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "DemoServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "EchoServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterEchoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client EchoServiceClient) error {
-	mux.Handle(http.MethodPost, pattern_EchoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+// "DemoServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
+func RegisterDemoServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client DemoServiceClient) error {
+	mux.Handle(http.MethodPost, pattern_DemoService_Echo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/demo.v1.EchoService/Echo", runtime.WithHTTPPathPattern("/v1/demo/echo"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/demo.v1.DemoService/Echo", runtime.WithHTTPPathPattern("/v1/demo/echo"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_EchoService_Echo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_DemoService_Echo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_EchoService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_DemoService_Echo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodGet, pattern_DemoService_Healthz_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/demo.v1.DemoService/Healthz", runtime.WithHTTPPathPattern("/v1/demo/healthz"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_DemoService_Healthz_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_DemoService_Healthz_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }
 
 var (
-	pattern_EchoService_Echo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "demo", "echo"}, ""))
+	pattern_DemoService_Echo_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "demo", "echo"}, ""))
+	pattern_DemoService_Healthz_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "demo", "healthz"}, ""))
 )
 
 var (
-	forward_EchoService_Echo_0 = runtime.ForwardResponseMessage
+	forward_DemoService_Echo_0    = runtime.ForwardResponseMessage
+	forward_DemoService_Healthz_0 = runtime.ForwardResponseMessage
 )

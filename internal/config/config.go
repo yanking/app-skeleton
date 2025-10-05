@@ -1,6 +1,9 @@
 package config
 
-import "github.com/yanking/app-skeleton/pkg/conf"
+import (
+	"github.com/yanking/app-skeleton/pkg/conf"
+	"github.com/yanking/app-skeleton/pkg/log"
+)
 
 var config *Config
 
@@ -21,19 +24,20 @@ func Set(conf *Config) {
 }
 
 type Config struct {
-	AppName    string       `mapstructure:"app-name" yaml:"app-name" json:"app-name"`
-	ServerMode string       `mapstructure:"server-mode" yaml:"server-mode" json:"server-mode"`
-	JwtKey     string       `mapstructure:"jwt-key" yaml:"jwt-key" json:"jwt-key"`
-	Expiration string       `mapstructure:"expiration" yaml:"expiration" json:"expiration"`
-	HTTP       HTTPConfig   `mapstructure:"http" yaml:"http" json:"http"`
-	Grpc       GrpcConfig   `mapstructure:"grpc" yaml:"grpc" json:"grpc"`
-	Log        LogConfig    `mapstructure:"log" yaml:"log" json:"log"`
-	Mysql      MysqlConfig  `mapstructure:"mysql" yaml:"mysql" json:"mysql"`
-	Redis      RedisConfig  `mapstructure:"redis" yaml:"redis" json:"redis"`
-	Jaeger     JaegerConfig `mapstructure:"jaeger" yaml:"jaeger" json:"jaeger"`
+	AppName       string       `mapstructure:"app-name" yaml:"app-name" json:"app-name"`
+	EnableMetrics bool         `mapstructure:"enable-metrics" yaml:"enable-metrics" json:"enable-metrics"`
+	ServerMode    string       `mapstructure:"server-mode" yaml:"server-mode" json:"server-mode"`
+	JwtKey        string       `mapstructure:"jwt-key" yaml:"jwt-key" json:"jwt-key"`
+	Expiration    string       `mapstructure:"expiration" yaml:"expiration" json:"expiration"`
+	HTTP          HTTPConfig   `mapstructure:"http" yaml:"http" json:"http"`
+	Grpc          GrpcConfig   `mapstructure:"grpc" yaml:"grpc" json:"grpc"`
+	Log           *log.Options `mapstructure:"log" yaml:"log" json:"log"`
+	Mysql         MysqlConfig  `mapstructure:"mysql" yaml:"mysql" json:"mysql"`
+	Redis         RedisConfig  `mapstructure:"redis" yaml:"redis" json:"redis"`
+	Jaeger        JaegerConfig `mapstructure:"jaeger" yaml:"jaeger" json:"jaeger"`
 }
 
-// HTTPConfig 对应 HTTP 相关配置
+// HTTPConfig 对应 HTTP 相关配置 (主要用于 gRPC-Gateway)
 type HTTPConfig struct {
 	Addr    string `mapstructure:"addr" yaml:"addr" json:"addr"`
 	Timeout string `mapstructure:"timeout" yaml:"timeout" json:"timeout"`
@@ -42,15 +46,14 @@ type HTTPConfig struct {
 // GrpcConfig 对应 gRPC 相关配置
 type GrpcConfig struct {
 	Addr string `mapstructure:"addr" yaml:"addr" json:"addr"`
+	// Gateway 用于配置 gRPC-Gateway 相关选项
+	Gateway GatewayConfig `mapstructure:"gateway" yaml:"gateway" json:"gateway"`
 }
 
-// LogConfig 对应日志相关配置
-type LogConfig struct {
-	DisableCaller     bool     `mapstructure:"disable-caller" yaml:"disable-caller" json:"disable-caller"`
-	DisableStacktrace bool     `mapstructure:"disable-stacktrace" yaml:"disable-stacktrace" json:"disable-stacktrace"`
-	Level             string   `mapstructure:"level" yaml:"level" json:"level"`
-	Format            string   `mapstructure:"format" yaml:"format" json:"format"`
-	OutputPaths       []string `mapstructure:"output-paths" yaml:"output-paths" json:"output-paths"`
+// GatewayConfig 对应 gRPC-Gateway 相关配置
+type GatewayConfig struct {
+	// Enabled 控制是否启用 gRPC-Gateway
+	Enabled bool `mapstructure:"enabled" yaml:"enabled" json:"enabled"`
 }
 
 // MysqlConfig 对应 MySQL 数据库相关配置

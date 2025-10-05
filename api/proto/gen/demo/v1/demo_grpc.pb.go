@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,99 +20,137 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	EchoService_Echo_FullMethodName = "/demo.v1.EchoService/Echo"
+	DemoService_Echo_FullMethodName    = "/demo.v1.DemoService/Echo"
+	DemoService_Healthz_FullMethodName = "/demo.v1.DemoService/Healthz"
 )
 
-// EchoServiceClient is the client API for EchoService service.
+// DemoServiceClient is the client API for DemoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type EchoServiceClient interface {
+type DemoServiceClient interface {
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
+	Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HealthzResponse, error)
 }
 
-type echoServiceClient struct {
+type demoServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewEchoServiceClient(cc grpc.ClientConnInterface) EchoServiceClient {
-	return &echoServiceClient{cc}
+func NewDemoServiceClient(cc grpc.ClientConnInterface) DemoServiceClient {
+	return &demoServiceClient{cc}
 }
 
-func (c *echoServiceClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
+func (c *demoServiceClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(EchoResponse)
-	err := c.cc.Invoke(ctx, EchoService_Echo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, DemoService_Echo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// EchoServiceServer is the server API for EchoService service.
-// All implementations should embed UnimplementedEchoServiceServer
-// for forward compatibility.
-type EchoServiceServer interface {
-	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
+func (c *demoServiceClient) Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HealthzResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HealthzResponse)
+	err := c.cc.Invoke(ctx, DemoService_Healthz_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
-// UnimplementedEchoServiceServer should be embedded to have
+// DemoServiceServer is the server API for DemoService service.
+// All implementations should embed UnimplementedDemoServiceServer
+// for forward compatibility.
+type DemoServiceServer interface {
+	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
+	Healthz(context.Context, *emptypb.Empty) (*HealthzResponse, error)
+}
+
+// UnimplementedDemoServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedEchoServiceServer struct{}
+type UnimplementedDemoServiceServer struct{}
 
-func (UnimplementedEchoServiceServer) Echo(context.Context, *EchoRequest) (*EchoResponse, error) {
+func (UnimplementedDemoServiceServer) Echo(context.Context, *EchoRequest) (*EchoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
 }
-func (UnimplementedEchoServiceServer) testEmbeddedByValue() {}
+func (UnimplementedDemoServiceServer) Healthz(context.Context, *emptypb.Empty) (*HealthzResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthz not implemented")
+}
+func (UnimplementedDemoServiceServer) testEmbeddedByValue() {}
 
-// UnsafeEchoServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to EchoServiceServer will
+// UnsafeDemoServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to DemoServiceServer will
 // result in compilation errors.
-type UnsafeEchoServiceServer interface {
-	mustEmbedUnimplementedEchoServiceServer()
+type UnsafeDemoServiceServer interface {
+	mustEmbedUnimplementedDemoServiceServer()
 }
 
-func RegisterEchoServiceServer(s grpc.ServiceRegistrar, srv EchoServiceServer) {
-	// If the following call pancis, it indicates UnimplementedEchoServiceServer was
+func RegisterDemoServiceServer(s grpc.ServiceRegistrar, srv DemoServiceServer) {
+	// If the following call pancis, it indicates UnimplementedDemoServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&EchoService_ServiceDesc, srv)
+	s.RegisterService(&DemoService_ServiceDesc, srv)
 }
 
-func _EchoService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DemoService_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(EchoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EchoServiceServer).Echo(ctx, in)
+		return srv.(DemoServiceServer).Echo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EchoService_Echo_FullMethodName,
+		FullMethod: DemoService_Echo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EchoServiceServer).Echo(ctx, req.(*EchoRequest))
+		return srv.(DemoServiceServer).Echo(ctx, req.(*EchoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// EchoService_ServiceDesc is the grpc.ServiceDesc for EchoService service.
+func _DemoService_Healthz_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DemoServiceServer).Healthz(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DemoService_Healthz_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DemoServiceServer).Healthz(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// DemoService_ServiceDesc is the grpc.ServiceDesc for DemoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var EchoService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "demo.v1.EchoService",
-	HandlerType: (*EchoServiceServer)(nil),
+var DemoService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "demo.v1.DemoService",
+	HandlerType: (*DemoServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Echo",
-			Handler:    _EchoService_Echo_Handler,
+			Handler:    _DemoService_Echo_Handler,
+		},
+		{
+			MethodName: "Healthz",
+			Handler:    _DemoService_Healthz_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

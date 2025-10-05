@@ -11,8 +11,8 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,130 +23,31 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type EchoRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *EchoRequest) Reset() {
-	*x = EchoRequest{}
-	mi := &file_demo_v1_demo_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EchoRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EchoRequest) ProtoMessage() {}
-
-func (x *EchoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_demo_v1_demo_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EchoRequest.ProtoReflect.Descriptor instead.
-func (*EchoRequest) Descriptor() ([]byte, []int) {
-	return file_demo_v1_demo_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *EchoRequest) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
-type EchoResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         string                 `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *EchoResponse) Reset() {
-	*x = EchoResponse{}
-	mi := &file_demo_v1_demo_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *EchoResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*EchoResponse) ProtoMessage() {}
-
-func (x *EchoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_demo_v1_demo_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use EchoResponse.ProtoReflect.Descriptor instead.
-func (*EchoResponse) Descriptor() ([]byte, []int) {
-	return file_demo_v1_demo_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *EchoResponse) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
 var File_demo_v1_demo_proto protoreflect.FileDescriptor
 
 const file_demo_v1_demo_proto_rawDesc = "" +
 	"\n" +
-	"\x12demo/v1/demo.proto\x12\ademo.v1\x1a\x1cgoogle/api/annotations.proto\x1a.protoc-gen-openapiv2/options/annotations.proto\"#\n" +
-	"\vEchoRequest\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\tR\x05value\"$\n" +
-	"\fEchoResponse\x12\x14\n" +
-	"\x05value\x18\x01 \x01(\tR\x05value2\\\n" +
-	"\vEchoService\x12M\n" +
-	"\x04Echo\x12\x14.demo.v1.EchoRequest\x1a\x15.demo.v1.EchoResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/v1/demo/echoB\xd3\x01\x92A\x9b\x01\x12r\n" +
+	"\x12demo/v1/demo.proto\x12\ademo.v1\x1a\x15demo/v1/healthz.proto\x1a\x12demo/v1/user.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a.protoc-gen-openapiv2/options/annotations.proto2\xe2\x01\n" +
+	"\vDemoService\x12M\n" +
+	"\x04Echo\x12\x14.demo.v1.EchoRequest\x1a\x15.demo.v1.EchoResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/v1/demo/echo\x12\x83\x01\n" +
+	"\aHealthz\x12\x16.google.protobuf.Empty\x1a\x18.demo.v1.HealthzResponse\"F\x92A+\n" +
+	"\f服务治理\x12\x12服务健康检查*\aHealthz\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/demo/healthzB\xd3\x01\x92A\x9b\x01\x12r\n" +
 	"\x10App-Skeleton API\"Y\n" +
 	"\x18小而美的博客项目\x12'https://github.com/yanking/app-skeleton\x1a\x14colin404@foxmail.com2\x031.0*\x01\x012\x10application/json:\x10application/jsonZ2github.com/yanking/app-skeleton/api/gen/demo/v1;v1b\x06proto3"
 
-var (
-	file_demo_v1_demo_proto_rawDescOnce sync.Once
-	file_demo_v1_demo_proto_rawDescData []byte
-)
-
-func file_demo_v1_demo_proto_rawDescGZIP() []byte {
-	file_demo_v1_demo_proto_rawDescOnce.Do(func() {
-		file_demo_v1_demo_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_demo_v1_demo_proto_rawDesc), len(file_demo_v1_demo_proto_rawDesc)))
-	})
-	return file_demo_v1_demo_proto_rawDescData
-}
-
-var file_demo_v1_demo_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_demo_v1_demo_proto_goTypes = []any{
-	(*EchoRequest)(nil),  // 0: demo.v1.EchoRequest
-	(*EchoResponse)(nil), // 1: demo.v1.EchoResponse
+	(*EchoRequest)(nil),     // 0: demo.v1.EchoRequest
+	(*emptypb.Empty)(nil),   // 1: google.protobuf.Empty
+	(*EchoResponse)(nil),    // 2: demo.v1.EchoResponse
+	(*HealthzResponse)(nil), // 3: demo.v1.HealthzResponse
 }
 var file_demo_v1_demo_proto_depIdxs = []int32{
-	0, // 0: demo.v1.EchoService.Echo:input_type -> demo.v1.EchoRequest
-	1, // 1: demo.v1.EchoService.Echo:output_type -> demo.v1.EchoResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: demo.v1.DemoService.Echo:input_type -> demo.v1.EchoRequest
+	1, // 1: demo.v1.DemoService.Healthz:input_type -> google.protobuf.Empty
+	2, // 2: demo.v1.DemoService.Echo:output_type -> demo.v1.EchoResponse
+	3, // 3: demo.v1.DemoService.Healthz:output_type -> demo.v1.HealthzResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -157,19 +58,20 @@ func file_demo_v1_demo_proto_init() {
 	if File_demo_v1_demo_proto != nil {
 		return
 	}
+	file_demo_v1_healthz_proto_init()
+	file_demo_v1_user_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_demo_v1_demo_proto_rawDesc), len(file_demo_v1_demo_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_demo_v1_demo_proto_goTypes,
 		DependencyIndexes: file_demo_v1_demo_proto_depIdxs,
-		MessageInfos:      file_demo_v1_demo_proto_msgTypes,
 	}.Build()
 	File_demo_v1_demo_proto = out.File
 	file_demo_v1_demo_proto_goTypes = nil

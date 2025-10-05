@@ -1,4 +1,5 @@
 app-name: demo-server
+enable-metrics: true # 开启 metrics, router:  /metrics
 # 服务器类型，可选值有：
 #   grpc：启动一个 gRPC 服务器
 #   grpc-gateway: 启动一个 gRPC 服务器 + HTTP 反向代理服务器
@@ -13,7 +14,7 @@ jwt-key: Rtg8BPKNEf2mB4mgvKONGPZZQSaJWNLijxR42qRgq0iBb5
 # JWT Token 过期时间
 expiration: 2h
 
-# HTTP 服务器相关配置
+# HTTP 服务器相关配置 (主要用于 gRPC-Gateway)
 http:
   # HTTP 服务器监听地址
   addr: :5555
@@ -23,6 +24,10 @@ http:
 grpc:
   # GRPC 服务器监听地址
   addr: :6666
+  # gRPC-Gateway 配置
+  gateway:
+    # 是否启用 gRPC-Gateway
+    enabled: true
 
 # 日志配置
 log:
@@ -30,6 +35,7 @@ log:
   disable-caller: false
   # 是否禁止在 panic 及以上级别打印堆栈信息
   disable-stacktrace: false
+  enable-color: true
   # 指定日志级别，可选值：debug, info, warn, error, dpanic, panic, fatal
   # 生产环境建议设置为 info
   level: debug
@@ -74,5 +80,3 @@ redis:
 jaeger:
   agentHost: "192.168.3.37"
   agentPort: 6831
-
-
